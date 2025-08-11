@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: katalog
+    env: docker
+    plan: free
+    autoDeploy: true
+    region: frankfurt
+    healthCheckPath: /api/health
+    buildCommand: docker build -t katalog .
+    startCommand: node server/server.js
+    envVars:
+      - key: MOCK_MODE
+        value: "true"
+      - key: EASYCONNECT_BASE_URL
+        value: https://api.easyconnect.no
+      - key: EASYCONNECT_API_KEY
+        sync: false

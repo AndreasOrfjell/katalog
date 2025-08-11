@@ -1,0 +1,27 @@
+version: "3.9"
+services:
+  server:
+    image: node:20-alpine
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+      - EASYCONNECT_BASE_URL=https://api.easyconnect.no
+      - EASYCONNECT_API_KEY=
+      - MOCK_MODE=true
+    volumes:
+      - ./server:/app
+  web:
+    image: node:20-alpine
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_PORT=5173
+    depends_on:
+      - server
+    volumes:
+      - ./web:/app
