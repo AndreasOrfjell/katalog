@@ -1,21 +1,32 @@
 # ---------- build web ----------
 FROM node:20-alpine AS webbuild
 WORKDIR /web
-COPY web/package.json web/package-lock.json* web/pnpm-lock.yaml* web/yarn.lock* ./ 2>/dev/null || true
+# Installer deps basert på package.json (låsefil er valgfri)
+COPY web/package.json ./
 RUN npm install
-COPY web ./
+# Kopier resten og bygg
+COPY web/ ./
 RUN npm run build
 
 # ---------- server ----------
 FROM node:20-alpine AS server
 WORKDIR /app
 ENV NODE_ENV=production
+
+# Installer server-deps (prod)
 COPY server/package.json ./
 RUN npm install --omit=dev
-COPY server ./server
-# copy built frontend into /web/dist (the server serves it if present)
+
+# Kopier serverkode
+COPY server/ ./server
+
+# Kopier ferdig bygget frontend fra webbuild
 COPY --from=webbuild /web/dist ./web/dist
+
+# Konfig
 EXPOSE 4000
 ENV PORT=4000
 ENV MOCK_MODE=true
+
+# Start (Render/Docker bruker CMD her)
 CMD ["node", "server/server.js"]
