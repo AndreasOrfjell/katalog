@@ -6,8 +6,6 @@ services:
     autoDeploy: true
     region: frankfurt
     healthCheckPath: /api/health
-    # Ikke buildCommand / startCommand for Docker!
-    # dockerCommand kan settes hvis du VIL overstyre CMD i Dockerfile.
     envVars:
       - key: MOCK_MODE
         value: "true"
